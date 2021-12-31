@@ -54,14 +54,6 @@ import warnings
 # print("Shape X_test = ", X_test.shape)
 # print("Shape X_test = ", y_test.shape)
 
-# y = np.array([1,2,3])
-# print(y)
-
-# data = pa.DataFrame()
-# print(data)
-
-# ------------------------------------------------
-
 # print(y_train[0])
 # plt.imshow(X_train[0], cmap=cm.Greys)
 # plt.show()
@@ -159,9 +151,35 @@ z_train = scaler_b.fit_transform(X_train_1D)
 z_test = scaler_b.fit_transform(X_test_1D)
 
 
+#==========================================LDA-SKLEARN==========================================
+
+# Préparation des données pour une réduction LDA
+lda_train = LinearDiscriminantAnalysis()
+lda_test = LinearDiscriminantAnalysis()
+X_train_lda = lda_train.fit_transform(X_train_1D, y_train)
+X_test_lda = lda_test.fit_transform(X_test_1D, y_test)
+
+# print(lda_train.explained_variance_ratio_)
+# print(lda_train.explained_variance_ratio_)
+
+# print(lda_test.explained_variance_ratio_)
+
+# plt.scatter(X_train_lda[:,0], np.zeros(X_train_lda.shape[0]), c=y_train)
+# plt.show()
+
+# plt.scatter(X_train_lda[:, 0], X_train_lda[:, 1], c=y_train)
+# plt.xlabel('LDA1')
+# plt.ylabel('LDA2')
+# plt.show()
+
+
+
+
 #==========================================KNN-SKLEARN==========================================
 # OBSERVATION :
 # Accuracy du modèle = 85,54%
+# Entraînement du modèle = 0.0050 / 0.0089
+
 
 knn = KNeighborsClassifier()
 
@@ -171,21 +189,23 @@ t = time() - t
 
 y_pred = knn.predict(X_test_1D)
 
-# cm_knn = confusion_matrix(y_test, y_pred)
-# print(cm_knn)
+# # cm_knn = confusion_matrix(y_test, y_pred)
+# # print(cm_knn)
 acc_knn = accuracy_score(y_test, y_pred)
 print("Accuracy for knn = ", '{:.2%}'.format(acc_knn), " in time = ", t)
 
 
 #=======================================KNN_ACP-SKLEARN==========================================
 # OBSERVATION :
-# L'ACP n'améliore pas l'accurasy du modèle pour un classifieur knn au contraire il la dégrade, le temps d'entrainement est également 
-# décuplé
+# L'ACP n'améliore pas l'accuracy du modèle pour un classifieur "knn" au contraire il la dégrade (-5%), le temps d'entrainement  
+# est également décuplé
 # *************************************************************************
-# -> la meilleur accurcacy que j'ai pu trouver était de 80,41% pour 11 axes 
+# -> la meilleur accurcacy que j'ai pu trouver était de 80,41% / 80.37% pour 11 axes 
+# -> le temps d'entraînement associé est de 3.7038
 # *************************************************************************
 # lorsque l'on réduit les dimensions à partir du nombre d'axes optimale (11) l'accuracy diminue également
 # lorsque l'on augmente les dimensions à partir du nombre d'axes optimale (11) l'accuracy diminue également
+
 
 knn = KNeighborsClassifier()
 p_b = 11
@@ -213,10 +233,31 @@ print("Best accuracy for knn (ACP - ", p_b, " axes) = ",'{:.2%}'.format(acc_knn_
 # print("Best accuracy for bayes (ACP - ", best_p, " axes) = ",'{:.2%}'.format(max_acc), " in time = ", t)
 # --------------------------------------------------------------------------------------------------------------------
 
+#=======================================KNN_LDA-SKLEARN==========================================
+# OBSERVATION :
+# Accuracy du modèle = 59,78%
+# Entraînement du modèle = 0.1794 / 0.1415 / 0.1070 
+#  - La réduction de dimension par LDA dégrade (-25%) l'accuracy du modèle avec une classification par "knn" et augmente le temps 
+#    d'entraînement du modèle  
+#  - La réduction par LDA est (nettement -20%) moins efficace que la réduction par ACP pour la classification du corpus 
+
+
+knn = KNeighborsClassifier()
+
+t = time() 
+knn.fit(X_train_lda, y_train)
+t = time() - t
+
+y_pred = knn.predict(X_test_lda)
+acc_knn_lda = accuracy_score(y_test, y_pred)
+
+print("Accuracy for knn (LDA) =  ",'{:.2%}'.format(acc_knn_lda), " in time = ", t)
 
 #=========================================BAYES-SKLEARN=========================================
 # OBSERVATION :
 # Accuracy du modèle = 58,56%
+# Entraînement du modèle = 0.6572 / 0.5744
+
 
 nb = GaussianNB()
 
@@ -234,7 +275,8 @@ print("Accuracy for bayes = ", '{:.2%}'.format(acc_b), " in time = ", t)
 # OBSERVATION :
 # plus le nombre axes est petit meilleur est l'accuracy du modèle et le temps de d'entrainement est réduit
 # *************************************************************************
-# -> le meilleur accurcacy que j'ai pu trouver était de 69,10% pour 11 axes 
+# -> le meilleur accurcacy que j'ai pu trouver était de 69,10% / 69.12% pour 11 axes 
+# -> le temps d'entraînement correspondant est de 2.727
 # *************************************************************************
 
 nb = GaussianNB()
@@ -263,6 +305,52 @@ print("Best accuracy for bayes (ACP - ", p_b, " axes) = ",'{:.2%}'.format(acc_b_
 # print("Best accuracy for bayes (ACP - ", best_p, " axes) = ",'{:.2%}'.format(max_acc), " in time = ", t)
 # --------------------------------------------------------------------------------------------------------------------
 
+#======================================BAYES_LDA-SKLEARN=========================================
+# OBSERVATION :
+# Accuracy du modèle = 60.97%
+# Entraînement du modèle = 0.0228 / 0.0129
+#  - La réduction de dimension par LDA permet d'améliorer l'accuracy du modèle avec une classification par Bayes et réduit également 
+#    le temps d'entraînement du modèle 
+#  - La réduction par LDA est moins efficace que la réduction par ACP pour la classification du corpus 
+
+
+nb = GaussianNB()
+
+t = time() 
+nb.fit(X_train_lda, y_train)
+t = time() - t
+
+y_pred = nb.predict(X_test_lda)
+acc_b = accuracy_score(y_test, y_pred)
+print("Accuracy for bayes (LDA) = ", '{:.2%}'.format(acc_b), " in time = ", t)
+
+
+"""
+Observartion  générale sur les classifications par knn et bayes couplées aux techniques de réduction ACP et LDA
+
+De manière générale le meilleur classifieur pour notre corpus est le knn 
+De manière générale la réduction par ACP augmente (nettement) le temps d'entrainement du modèle (si l'on cherche à optimiser l'accuracy
+du modèle -> pas certain de vouloir affirmer ça)
+
+-> Sans réduction
+Le meilleur classifieur pour notre corpus est le knn (85.54% > 58.56%), le temps d'entraînement du modèle est également meilleur avec
+le classifieur knn (0.0089 < 0.5744)
+
+-> Avec réduction
+ - La réduction de dimension dégrade la classification par knn (LDA plus que l'ACP) le temps d'entraînement du modèle est également 
+   dégradé (ACP beaucoup plus que la LDA 3.7038 > 0.1070 > 0.0089)
+
+A L'INVERSE
+
+ - La réduction de dimension améliore la classification par bayes (ACP plus que la LDA) le temps d'entraînement du modèle est néanmoins 
+   augmenté pour une réduction par ACP (2.7279 > 0.5744) mais il est réduit avec une réduction par LDA (0.0129 < 0.5744)
+"""
+
+
+
+
+
+
 
 #------------------------------------------------BASE DE TRAVAIL------------------------------------------------------
 # nb = GaussianNB()
@@ -289,41 +377,4 @@ print("Best accuracy for bayes (ACP - ", p_b, " axes) = ",'{:.2%}'.format(acc_b_
 
 
 
-
-#=========================================KNN-NEIGNBOOR=========================================
-def euclidean(u, v):
-    return np.sqrt(np.sum((u -v[:-1])**2))
-
-def distances(u, dataset):
-    dist = []
-    for d in dataset:
-        dist.append(euclidean(u, d))
-    return dist
-
-def voisins(u, datatset, k):
-    distances = []
-
-    for d in datatset:
-        distances.append((d, euclidean(u, d)))
-    #distances.sort(key=lambda tup: tup[1])
-    distances.sort(key=lambda tup: tup[1])
-    neighs = []
-    for i in range(k):
-        neighs.append(distances[i][0])
-    #print('u: ', u, ' its neighbors: ', neighs)
-    return neighs
-
-  
-
-# print(classifier(X_train_1D[0], X_train_1D[:3], 1))
-
-# print("\n", X_train_1D[0])
-# print(X_train_1D[:][0:2].shape)
-# print(len(X_train_1D[:][0:2]))
-# print(X_train_1D[:][0:2][0])
-# print(X_train_1D[:][0:2][1])
-
-
-
-#=================================================================================================
 
