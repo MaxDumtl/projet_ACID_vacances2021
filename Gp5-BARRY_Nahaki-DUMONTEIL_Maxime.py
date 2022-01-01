@@ -40,6 +40,10 @@ import random as rd
 from collections import Counter
 import warnings
 
+from sklearn import tree
+from sklearn import metrics
+
+from sklearn.ensemble import RandomForestClassifier
 
 (X_train, y_train), (X_test, y_test) = fashion_mnist.load_data()
 
@@ -189,8 +193,8 @@ t = time() - t
 
 y_pred = knn.predict(X_test_1D)
 
-# # cm_knn = confusion_matrix(y_test, y_pred)
-# # print(cm_knn)
+# cm_knn = confusion_matrix(y_test, y_pred)
+# print(cm_knn)
 acc_knn = accuracy_score(y_test, y_pred)
 print("Accuracy for knn = ", '{:.2%}'.format(acc_knn), " in time = ", t)
 
@@ -346,9 +350,137 @@ A L'INVERSE
    augmenté pour une réduction par ACP (2.7279 > 0.5744) mais il est réduit avec une réduction par LDA (0.0129 < 0.5744)
 """
 
+#======================================DECISION_TREE-SKLEARN=========================================
+# OBSERVATION :
+# Accuracy du modèle = 78.99%
+# Entraînement du modèle = 39.2504
+
+dt = tree.DecisionTreeClassifier()
+
+t = time() 
+dt.fit(X_train_1D, y_train)
+t = time() - t
+
+y_pred = dt.predict(X_test_1D)
+acc_tree = metrics.accuracy_score(y_test, y_pred)
+print('Accuracy for decision tree: ','{:2.2%}'.format(acc_tree), " in time = ", t)
+
+#===================================DECISION_TREE_ACP-SKLEARN========================================
+# OBSERVATION :
+# 11 - 71.80% -3.9518
+# La réduction ACP améliore nettement le temps d'entraînement (de 36 sec) du modèle mais réduit (de 7%) l'accuracy de la classification
+
+dt = tree.DecisionTreeClassifier()
+p_b = 11
+
+t = time() 
+acc_tree_acp = trainACP(dt, p_b, z_train, z_test)
+t = time() - t
+
+print("Best accuracy for decision tree (ACP - ", p_b, " axes) = ",'{:.2%}'.format(acc_tree_acp), " in time = ", t)
+
+# --------------------------------------------------TEST--------------------------------------------------------------
+# max_acc = trainACP(dt, 1, z_train, z_test)
+# best_p = 1
+# p_b = best_p + 1
+# acc = trainACP(dt, p_b, z_train, z_test)
+# while(p_b < 784):
+#     if(acc > best_p):
+#         max_acc = acc
+#         best_p = p_b
+
+#     p_b += 1
+#     acc = trainACP(dt, p_b, z_train, z_test)
+#     print("Accuracy for decision tree (ACP - ", p_b, " axes) = ",'{:.2%}'.format(acc))
+
+# print("Best accuracy for decision tree (ACP - ", best_p, " axes) = ",'{:.2%}'.format(max_acc), " in time = ", t)
+# --------------------------------------------------------------------------------------------------------------------
+
+#===================================DECISION_TREE_LDA-SKLEARN=======================================
+# OBSERVATION :
+# Accuracy du modèle = 52.93%
+# Entraînement du modèle = 0.9530
+# La réduction LDA améliore nettement le temps d'entraînement du modèle (le fait passer à moins d'une seconde) mais réduit (de 19%) 
+# l'accuracy de la classification
 
 
 
+dt = tree.DecisionTreeClassifier()
+
+t = time() 
+dt.fit(X_train_lda, y_train)
+t = time() - t
+
+y_pred = dt.predict(X_test_lda)
+acc_tree_lda = accuracy_score(y_test, y_pred)
+print("Accuracy for decision tree (LDA) = ", '{:.2%}'.format(acc_tree_lda), " in time = ", t)
+
+#======================================RANDOM_FOREST-SKLEARN=========================================
+# OBSERVATION :
+# Accuracy du modèle = 87.65%
+# Entraînement du modèle = 79.7895
+
+
+rf = RandomForestClassifier()
+
+t = time() 
+rf.fit(X_train_1D, y_train)
+t = time() - t
+
+y_pred = rf.predict(X_test_1D)
+acc_rd_forest = metrics.accuracy_score(y_test, y_pred)
+print('Accuracy for random forest: ','{:2.2%}'.format(acc_rd_forest), " in time = ", t)
+
+#===================================RANDOM_FOREST_ACP-SKLEARN========================================
+# OBSERVATION :
+# 11 - 81.40% - 23.0976
+# La réduction ACP améliore nettement le temps d'entraînement du modèle (reduit de 56 sec) mais réduit (de 6%) l'accuracy de 
+# la classification
+
+rf = RandomForestClassifier()
+p_b = 11
+
+t = time() 
+acc_forest_acp = trainACP(rf, p_b, z_train, z_test)
+t = time() - t
+
+print("Best accuracy for random forest (ACP - ", p_b, " axes) = ",'{:.2%}'.format(acc_forest_acp), " in time = ", t)
+
+# --------------------------------------------------TEST--------------------------------------------------------------
+# max_acc = trainACP(rf, 1, z_train, z_test)
+# best_p = 1
+# p_b = best_p + 1
+# acc = trainACP(rf, p_b, z_train, z_test)
+# while(p_b < 784):
+#     if(acc > best_p):
+#         max_acc = acc
+#         best_p = p_b
+
+#     p_b += 1
+#     acc = trainACP(rf, p_b, z_train, z_test)
+#     print("Accuracy for random forest (ACP - ", p_b, " axes) = ",'{:.2%}'.format(acc))
+
+# print("Best accuracy for random forest (ACP - ", best_p, " axes) = ",'{:.2%}'.format(max_acc), " in time = ", t)
+# --------------------------------------------------------------------------------------------------------------------
+
+#===================================RANDOM_FOREST_LDA-SKLEARN=======================================
+# OBSERVATION :
+# Accuracy du modèle = 58.70%
+# Entraînement du modèle = 45.8462
+# La réduction LDA améliore le temps d'entraînement du modèle (réduit de 34 sec) mais réduit (de 23%) l'accuracy de la classification
+# La réduction par ACP est meilleur en tout point par rapport à une réduction par LDA (pour une classification par forêt aléatoire) 
+# même si les deux réductions améliores le temps d'entraînement du modèle les deux réduisent l'accuracy de la classification (la LDA plus
+# que l'ACP)
+
+rf = RandomForestClassifier()
+
+t = time() 
+rf.fit(X_train_lda, y_train)
+t = time() - t
+
+y_pred = rf.predict(X_test_lda)
+acc_forest_lda = accuracy_score(y_test, y_pred)
+print("Accuracy for random forest (LDA) = ", '{:.2%}'.format(acc_forest_lda), " in time = ", t)
 
 
 
