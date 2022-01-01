@@ -352,8 +352,8 @@ A L'INVERSE
 
 #======================================DECISION_TREE-SKLEARN=========================================
 # OBSERVATION :
-# Accuracy du modèle = 78.99%
-# Entraînement du modèle = 39.2504
+# Accuracy du modèle = 78.99% / 79.19%
+# Entraînement du modèle = 39.2504 / 51.4929
 
 dt = tree.DecisionTreeClassifier()
 
@@ -398,8 +398,8 @@ print("Best accuracy for decision tree (ACP - ", p_b, " axes) = ",'{:.2%}'.forma
 
 #===================================DECISION_TREE_LDA-SKLEARN=======================================
 # OBSERVATION :
-# Accuracy du modèle = 52.93%
-# Entraînement du modèle = 0.9530
+# Accuracy du modèle = 52.93% / 51.56%
+# Entraînement du modèle = 0.9530 /  0.9684
 # La réduction LDA améliore nettement le temps d'entraînement du modèle (le fait passer à moins d'une seconde) mais réduit (de 19%) 
 # l'accuracy de la classification
 
@@ -465,8 +465,8 @@ print("Best accuracy for random forest (ACP - ", p_b, " axes) = ",'{:.2%}'.forma
 
 #===================================RANDOM_FOREST_LDA-SKLEARN=======================================
 # OBSERVATION :
-# Accuracy du modèle = 58.70%
-# Entraînement du modèle = 45.8462
+# Accuracy du modèle = 58.70% / 58.38%
+# Entraînement du modèle = 45.8462 / 21.5101
 # La réduction LDA améliore le temps d'entraînement du modèle (réduit de 34 sec) mais réduit (de 23%) l'accuracy de la classification
 # La réduction par ACP est meilleur en tout point par rapport à une réduction par LDA (pour une classification par forêt aléatoire) 
 # même si les deux réductions améliores le temps d'entraînement du modèle les deux réduisent l'accuracy de la classification (la LDA plus
