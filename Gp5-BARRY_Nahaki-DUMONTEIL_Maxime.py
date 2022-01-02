@@ -26,7 +26,6 @@ import pandas as pa
 
 from statsmodels.regression.linear_model import OLS
 from sklearn.linear_model import LinearRegression
-from sklearn.datasets import load_iris, load_wine, load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score
@@ -78,14 +77,8 @@ data_knn = [np.append(X_train_1D[i][:X_train_1D.shape[1]], y_train[i]) for i in 
 #     data_train['Pixel'+ str(i)] = [X_train_1D[j][i] for j in range(X_train_1D.shape[0])]
 # pa.concat()
 # print(data_train.head())
-
-# classification sklearn
-# X = data_train[['Image', 'Type']]
-# Y = data_train['Type']
 #=================================================================================================
 
-# print(X_train_1D.shape)
-# print(y_train.shape)
 
 #==========================================ACP-SKLEARN==========================================
 
@@ -101,7 +94,10 @@ data_knn = [np.append(X_train_1D[i][:X_train_1D.shape[1]], y_train[i]) for i in 
 # acp_2 = PCA(n_components=nb_axes_2)
 # acp_3 = PCA(n_components=nb_axes_3)
 # acp_4 = PCA(n_components=nb_axes_4)
-# print(acp)
+# print(acp_1)
+# print(acp_2)
+# print(acp_3)
+# print(acp_4)
 # coord_1 = acp_1.fit_transform(z)
 # coord_2 = acp_2.fit_transform(z)
 # coord_3 = acp_3.fit_transform(z)
