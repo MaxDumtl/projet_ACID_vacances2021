@@ -241,8 +241,8 @@ print("Best accuracy for knn (ACP - ", p_b, " axes) = ",'{:.2%}'.format(acc_knn_
 # OBSERVATION :
 # Accuracy du modèle = 59,78%
 # Entraînement du modèle = 0.1794 / 0.1415 / 0.1070 
-#  - La réduction de dimension par LDA dégrade (-25%) l'accuracy du modèle avec une classification par "knn" et augmente le temps 
-#    d'entraînement du modèle  
+#  - La réduction de dimension par LDA dégrade (-25%) l'accuracy du modèle avec une classification par "knn" et augmente légèrement
+#    le temps d'entraînement du modèle  
 #  - La réduction par LDA est (nettement -20%) moins efficace que la réduction par ACP pour la classification du corpus 
 
 
@@ -275,13 +275,15 @@ acc_b = accuracy_score(y_test, y_pred)
 print("Accuracy for bayes = ", '{:.2%}'.format(acc_b), " in time = ", t)
 
 #======================================BAYES_ACP-SKLEARN=========================================
-
 # OBSERVATION :
-# plus le nombre axes est petit meilleur est l'accuracy du modèle et le temps de d'entrainement est réduit
+# plus le nombre axes est petit meilleur est l'accuracy du modèle
 # *************************************************************************
-# -> le meilleur accurcacy que j'ai pu trouver était de 69,10% / 69.12% pour 11 axes 
+# -> la meilleur accurcacy que j'ai pu trouver était de 69,10% / 69.12% pour 11 axes 
 # -> le temps d'entraînement correspondant est de 2.727
 # *************************************************************************
+# comme pour la réduction avec ACP pour la classification par knn avec bayes on observe également que 
+#  - lorsque l'on réduit les dimensions à partir du nombre d'axes optimale (11) l'accuracy diminue également
+#  - lorsque l'on augmente les dimensions à partir du nombre d'axes optimale (11) l'accuracy diminue également
 
 nb = GaussianNB()
 p_b = 11
@@ -330,22 +332,22 @@ print("Accuracy for bayes (LDA) = ", '{:.2%}'.format(acc_b), " in time = ", t)
 
 
 """
-Observartion  générale sur les classifications par knn et bayes couplées aux techniques de réduction ACP et LDA
+Observartion générale sur les classifications par knn et bayes couplées aux techniques de réduction ACP et LDA
 
-De manière générale le meilleur classifieur pour notre corpus est le knn 
-De manière générale la réduction par ACP augmente (nettement) le temps d'entrainement du modèle (si l'on cherche à optimiser l'accuracy
-du modèle -> pas certain de vouloir affirmer ça)
+Le meilleur classifieur pour notre corpus à ce niveau est le knn 
+Pour ces deux premiers classifieurs la réduction par ACP augmente (nettement) le temps d'entrainement du modèle
 
 -> Sans réduction
-Le meilleur classifieur pour notre corpus est le knn (85.54% > 58.56%), le temps d'entraînement du modèle est également meilleur avec
-le classifieur knn (0.0089 < 0.5744)
+Le meilleur des deux classifieurs pour notre corpus est le knn (85.54% > 58.56%), le temps d'entraînement du modèle est également meilleur (0.0089 < 0.5744)
 
 -> Avec réduction
+(KNN)
  - La réduction de dimension dégrade la classification par knn (LDA plus que l'ACP) le temps d'entraînement du modèle est également 
    dégradé (ACP beaucoup plus que la LDA 3.7038 > 0.1070 > 0.0089)
 
 A L'INVERSE
 
+(BAYES)
  - La réduction de dimension améliore la classification par bayes (ACP plus que la LDA) le temps d'entraînement du modèle est néanmoins 
    augmenté pour une réduction par ACP (2.7279 > 0.5744) mais il est réduit avec une réduction par LDA (0.0129 < 0.5744)
 """
@@ -509,15 +511,17 @@ print("Accuracy for random forest (LDA) = ", '{:.2%}'.format(acc_forest_lda), " 
 
 
 '''
-Observations Générale :
+Observations générale finale sur l'ensemble des classifieurs (knn, bayes, decision_tree random_forest):
 
 De manière générale, le meilleur classifieur est la forêt aléatoire (environ 87% de qualité)
 pour classer les données de ce corpus.
+
 Dans la majorité des cas, les techniques de réduction de dimensions ont pour effet de dégrader
 la qualité du classifieur pour ce corpus. Il n'y a que pour le classifieur Bayes que les techniques
 ACP et LDA ont donné de meilleurs résultats que le même classifieur sans réduction.
 Ces techniques ont ralenti l'entrainement et ont augmenté la complexité des modèles KNN et Bayes sur
-les données mais ont accéléré le processus pour l'arbre de décision et la forêt aléatoire.
+les données mais ont accéléré le processus pour l'arbre de décision et la forêt aléatoire au détriment des
+résultats de leur classifications.
 
 Sans réduction, le meilleur classifieur est celui utilisant le modèle de la forêt aléatoire tandis que
 le pire semble être Bayes (environ 58% de qualité). 
