@@ -508,5 +508,22 @@ print("Accuracy for random forest (LDA) = ", '{:.2%}'.format(acc_forest_lda), " 
 
 
 
+'''
+Observations Générale :
 
+De manière générale, le meilleur classifieur est la forêt aléatoire (environ 87% de qualité)
+pour classer les données de ce corpus.
+Dans la majorité des cas, les techniques de réduction de dimensions ont pour effet de dégrader
+la qualité du classifieur pour ce corpus. Il n'y a que pour le classifieur Bayes que les techniques
+ACP et LDA ont donné de meilleurs résultats que le même classifieur sans réduction.
+Ces techniques ont ralenti l'entrainement et ont augmenté la complexité des modèles KNN et Bayes sur
+les données mais ont accéléré le processus pour l'arbre de décision et la forêt aléatoire.
+
+Sans réduction, le meilleur classifieur est celui utilisant le modèle de la forêt aléatoire tandis que
+le pire semble être Bayes (environ 58% de qualité). 
+Avec réduction, le meilleur classifieur est encore la forêt aléatoire avec la technique ACP (environ 81%).
+
+De manière générale, c'est la technique de réductions de l'ACP qui donne de meilleurs résultats sur ce
+corpus de données comparés à LDA.
+'''
 
